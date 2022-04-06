@@ -23,7 +23,7 @@ public class UserDaoJDBCImpl implements UserDao {
                 "lastname char(30)," +
                 "age int NOT NULL," +
                 "PRIMARY KEY (id))";
-        try (Statement statement = connection.createStatement()){
+        try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -65,7 +65,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     @Override
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
         String sql = "SELECT * FROM user";
         try (Statement statement = connection.createStatement();
