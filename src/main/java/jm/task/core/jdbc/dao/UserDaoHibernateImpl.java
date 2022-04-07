@@ -4,7 +4,6 @@ import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 
 import javax.persistence.Query;
 import java.util.List;
@@ -25,11 +24,12 @@ public class UserDaoHibernateImpl implements UserDao {
                 "name VARCHAR(50) NOT NULL, lastName VARCHAR(50) NOT NULL, " +
                 "age TINYINT NOT NULL)";
         try (Session session = SESSIONFACTORY.openSession()) {
-            Transaction transaction = session.beginTransaction();
+            session.beginTransaction();
             Query query = session.createSQLQuery(sql).addEntity(User.class);
             query.executeUpdate();
-            transaction.commit();
+            session.getTransaction().commit();
         } catch (Exception e) {
+            SESSIONFACTORY.getCurrentSession().getTransaction().rollback();
             e.printStackTrace();
         }
 
@@ -45,6 +45,7 @@ public class UserDaoHibernateImpl implements UserDao {
             query.executeUpdate();
             session.getTransaction().commit();
         } catch (Exception e) {
+            SESSIONFACTORY.getCurrentSession().getTransaction().rollback();
             e.printStackTrace();
         }
     }
@@ -56,6 +57,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.save(new User(name, lastName, age));
             session.getTransaction().commit();
         } catch (Exception e) {
+            SESSIONFACTORY.getCurrentSession().getTransaction().rollback();
             e.printStackTrace();
         }
     }
@@ -68,6 +70,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.delete(user);
             session.getTransaction().commit();
         } catch (Exception e) {
+            SESSIONFACTORY.getCurrentSession().getTransaction().rollback();
             e.printStackTrace();
         }
     }
@@ -80,6 +83,7 @@ public class UserDaoHibernateImpl implements UserDao {
             list = (List<User>) session.createQuery("from User").list();
             session.getTransaction().commit();
         } catch (Exception e) {
+            SESSIONFACTORY.getCurrentSession().getTransaction().rollback();
             e.printStackTrace();
         }
         return list;
@@ -92,6 +96,7 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createQuery("delete from User").executeUpdate();
             session.getTransaction().commit();
         } catch (Exception e) {
+            SESSIONFACTORY.getCurrentSession().getTransaction().rollback();
             e.printStackTrace();
         }
     }
